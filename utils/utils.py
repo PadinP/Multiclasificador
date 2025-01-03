@@ -68,6 +68,7 @@ def extract_pickle_file(file_path):
 
 def plot_results(data, name_graph, title, x_label, y_label):
     plt.rcParams.update({'font.size': 13})
+    print(data) # Añade esta línea para imprimir los datos
     data.plot(kind='bar', rot=30, width=0.8, figsize=[8, 6])
     plt.title(title)
     plt.xlabel(x_label)

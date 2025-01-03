@@ -6,18 +6,18 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import accuracy_score
 
-escenario_1 = 'C:/Users/HP/Documents/TESIS/software/Multiclasificador/classification/files/escenario_de_prueba_1.csv'
-escenario_2 = 'C:/Users/HP/Documents/TESIS/software/Multiclasificador/classification/files/escenario_de_prueba_2.csv'
-escenario_3 = 'C:/Users/HP/Documents/TESIS/software/Multiclasificador/classification/files/escenario_de_prueba_3.csv'
-escenario_4 = 'C:/Users/HP/Documents/TESIS/software/Multiclasificador/classification/files/escenario_de_prueba_4.csv'
-escenario_5 = 'C:/Users/HP/Documents/TESIS/software/Multiclasificador/classification/files/escenario_de_prueba_5.csv'
+escenario_1 = 'classification/files/escenario_de_prueba_1.csv'
+escenario_2 = 'classification/files/escenario_de_prueba_2.csv'
+escenario_3 = 'classification/files/escenario_de_prueba_3.csv'
+escenario_4 = 'classification/files/escenario_de_prueba_4.csv'
+escenario_5 = 'classification/files/escenario_de_prueba_5.csvv'
 
 ensembles = ['bagging', 'adaboosting', 'voting', 'stacking']
-bagging_models='C:/Users/HP/Documents/TESIS/software/Multiclasificador/bagging/models_and_evaluation/models/*.pickle'
-adaboosting_models='C:/Users/HP/Documents/TESIS/software/Multiclasificador/adaboosting/models_and_evaluation/models' \
+bagging_models='bagging/models_and_evaluation/models/*.pickle'
+adaboosting_models='adaboosting/models_and_evaluation/models' \
                     '/*.pickle'
-voting_models = 'C:/Users/HP/Documents/TESIS/software/Multiclasificador/voting/models_and_evaluation/models/*.pickle'
-stacking_models='C:/Users/HP/Documents/TESIS/software/Multiclasificador/stacking/models_and_evaluation/models/*.pickle'
+voting_models = 'voting/models_and_evaluation/models/*.pickle'
+stacking_models='stacking/models_and_evaluation/models/*.pickle'
 bagg_prefix = 'Bag-'
 ada_prefix = 'Ada-'
 vot_prefix = 'Vot-'
