@@ -14,10 +14,10 @@ warnings.filterwarnings('ignore', category=RuntimeWarning)
 warnings.filterwarnings('ignore', category=UserWarning)
 warnings.filterwarnings('ignore', category=FutureWarning)
 
-database = 'C:/Users/HP/Documents/TESIS/software/datos/description_database.txt'
-escenario11 = 'D:/Python Scripts/preprocessData/smote/11/minmax/11.minmax_smote.pickle'
-escenario3 = 'D:/Python Scripts/preprocessData/smote/3/minmax/3.minmax_smote.pickle'
-data_pf = 'C:/Users/HP/Documents/TESIS/software/datos/file_clasf_pf_11.pckl'
+database = 'files/characterization_database.txt' 
+escenario11 = 'files/1.minmax_smote.pickle' 
+escenario3 = 'files/0.minmax_smote.pickle' 
+data_pf = 'files/file_clasf_pf_bueno.pckl' 
 path_file = './design/databases/metricas_calculadas.csv'
 ensambles_homogeneos = ['bagging', 'adaboosting']
 ensambles_hibridos = ['voting', 'stacking']
