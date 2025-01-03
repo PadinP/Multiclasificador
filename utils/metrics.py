@@ -2,7 +2,7 @@ import numpy as np
 import sklearn as sklearn
 from sklearn.metrics import mean_absolute_error
 from sklearn.metrics import accuracy_score
-from problexity import feature_based, linearity, neighborhood, dimensionality, class_imbalance
+from problexity.classification import feature_based, linearity, neighborhood, dimensionality, class_imbalance
 
 
 class Metric:
