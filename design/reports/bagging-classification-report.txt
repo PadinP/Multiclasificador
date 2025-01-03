@@ -1,0 +1,9 @@
+           Accuracy  Precision  Recall    F1   AUC
+CART-bag       0.96        1.0    0.93  0.96  0.97
+EXTRA-bag      0.99        1.0    0.99  0.99  1.00
+KNN-bag        0.94        1.0    0.87  0.93  0.94
+LR-bag         1.00        1.0    1.00  1.00  1.00
+MLP-bag        1.00        1.0    1.00  1.00  1.00
+NAIVE-bag      1.00        1.0    1.00  1.00  1.00
+SGD-bag        1.00        1.0    1.00  1.00  1.00
+SVC-bag        1.00        1.0    1.00  1.00  1.00

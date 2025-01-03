@@ -91,8 +91,7 @@ class homogeneo:
         for ensemble in self.models:
             performance = []
             list_models = []
-            path_models = 'C:/Users/HP/Documents/TESIS/software/Multiclasificador/' + ensemble + \
-                          '/models_and_evaluation/models/*.pickle'
+            path_models = f'C:/Users/ALEX/Desktop/Multiclasificador/{ensemble}/models_and_evaluation/models/*.pickle'
             for i, model in enumerate(glob.glob(path_models)):
                 file_name = model.split('\\')[-1]
                 if ensemble == 'bagging':
@@ -102,25 +101,38 @@ class homogeneo:
                     label = file_name.replace('boosting.pickle', '')
                     list_models.append(label)
 
-                model_extracted = joblib.load(model)
-                pred_label = model_extracted.predict(self.X_test)
-                performance.append([])
+                try:
+                    print(f"Cargando modelo: {model}")
+                    model_extracted = joblib.load(model)
+                    if hasattr(model_extracted, "estimators_"):
+                        model_extracted.estimator_ = model_extracted.estimators_[0]
+                    pred_label = model_extracted.predict(self.X_test)
+                except ValueError as e:
+                    print(f"Error de valor al cargar {model}: {e}")
+                    continue
+                except AttributeError as e:
+                    print(f"Error de atributo con el modelo {model}: {e}")
+                    continue
 
+                performance.append([])
                 for metrica in utils.metricas.keys():
                     performance[i].append(round(utils.metricas[metrica](self.true_label, pred_label), 2))
-            print('Clasificacion con models ' + ensemble + ' realizada')
+
+            print(f'Clasificación con modelos {ensemble} realizada')
             results = pd.DataFrame(performance, columns=utils.metricas.keys(), index=list_models)
 
-            name_graph = './design/reports/' + ensemble + '-classification-report.png'
-            name_report = './design/reports/' + ensemble + '-classification-report.txt'
-            title = 'Evaluación del multiclasificador ' + ensemble
+            name_graph = f'./design/reports/{ensemble}-classification-report.png'
+            name_report = f'./design/reports/{ensemble}-classification-report.txt'
+            title = f'Evaluación del multiclasificador {ensemble}'
             xlabel = 'Subconjuntos de clasificadores'
-            ylabel = 'Valor de las mátricas'
+            ylabel = 'Valor de las métricas'
             utils.plot_results(results, name_graph, title, xlabel, ylabel)
 
             with open(name_report, 'w') as f:
                 f.write(str(results))
+
             results.drop(columns=utils.metricas.keys(), axis=1)
+
 
 
 class hibrido:
@@ -140,7 +152,7 @@ class hibrido:
         for ensemble in self.models:
             performance = []
             list_models = []
-            path_models = 'C:/Users/HP/Documents/TESIS/software/Multiclasificador/' + ensemble + \
+            path_models = 'C:/Users/ALEX/Desktop/Multiclasificador/' + ensemble + \
                           '/models_and_evaluation/models/*.pickle'
             for i, model in enumerate(glob.glob(path_models)):
                 file_name = model.split('\\')[-1]
@@ -182,12 +194,12 @@ class hibrido:
 
 
 def run_design_experiments(escenario1, escenario2, homogeneos_list, hibridos_list, data_file_path, data_pf):
-    subsets_count = 100  # Se crearán 100 subconjunto de datos para cada clase
-    if os.path.exists(path_file):
-        os.remove(path_file)
+    # subsets_count = 100  # Se crearán 100 subconjunto de datos para cada clase
+    # if os.path.exists(path_file):
+    #     os.remove(path_file)
 
-    create_bots_subsets(escenario1, escenario2, data_pf, subsets_count)
-    create_human_subsets(escenario1, escenario2, data_pf, subsets_count)
+    # create_bots_subsets(escenario1, escenario2, data_pf, subsets_count)
+    # create_human_subsets(escenario1, escenario2, data_pf, subsets_count)
 
     homogeneo(homogeneos_list, data_file_path).evaluar()
     hibrido(hibridos_list, data_file_path).evaluar()

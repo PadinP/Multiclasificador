@@ -35,7 +35,7 @@ def build_ada_boosting_models(estimators, data_path):
 
         model_id.append(estimator)
         name_model_file = folders + '/' + estimator + '-adaboosting.pickle'
-        adaboosting = AdaBoostClassifier(base_estimator=estimators[estimator],
+        adaboosting = AdaBoostClassifier(estimator=estimators[estimator],
                                          algorithm="SAMME"
                                          )
         for metrica in metricas:

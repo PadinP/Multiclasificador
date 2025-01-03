@@ -1,0 +1,7 @@
+           Accuracy  Precision  Recall    F1   AUC
+CART-ada       0.82       0.93    0.69  0.79  0.82
+EXTRA-ada      1.00       1.00    1.00  1.00  1.00
+LR-ada         1.00       1.00    1.00  1.00  1.00
+NAIVE-ada      0.96       1.00    0.93  0.96  0.97
+SGD-ada        1.00       1.00    1.00  1.00  1.00
+SVC-ada        0.50       0.50    1.00  0.67  0.50

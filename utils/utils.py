@@ -23,11 +23,12 @@ estimators = {
     'CART': DecisionTreeClassifier(),
     'NAIVE': GaussianNB(),
     'KNN': KNeighborsClassifier(),
-    'SGD': SGDClassifier(),
+    'SGD': SGDClassifier(loss='log_loss', max_iter=1000),  # Actualiza la función de pérdida a 'log'
     'SVC': SVC(max_iter=15000, probability=True),
     'MLP': MLPClassifier(random_state=0, max_iter=4000),
     'EXTRA': ExtraTreeClassifier()
 }
+
 
 metricas = {
     'Accuracy': accuracy_score,
@@ -102,12 +103,15 @@ def selected_conbination(i, results, file):
 
 
 def loadData(database_path):
-    names = ["f1", "f2", "f3", "f4", "l1", "l2", "l3", "n1", "n2", "n3", "n4", "t1", "t2", "t3", "t4", "c1", "c2",
-             'label']
-    df = pd.read_csv(database_path, sep=';', names=names, skiprows=1)
-    df['c2'].replace([np.inf, -np.inf], 0, inplace=True)
-
-    return np.array(df)
+    names = ["f1", "f2", "f3", "f4", "l1", "l2", "l3", "n1", "n2", "n3", "n4", "t1", "t2", "t3", "t4", "c1", "c2", 'label']
+    try:
+        df = pd.read_csv(database_path, sep=';', names=names, skiprows=1, engine='python', on_bad_lines='skip')
+        df['c2'].replace([np.inf, -np.inf], 0, inplace=True)
+        df = df.dropna()  # Elimina filas con datos faltantes
+        return np.array(df)
+    except pd.errors.ParserError as e:
+        print(f"Error al analizar el archivo CSV: {e}")
+        return None
 
 
 def sored_data_with_label(id_subset, length, metrics, label, file):

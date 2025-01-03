@@ -24,13 +24,13 @@ ensambles_hibridos = ['voting', 'stacking']
 
 
 def main():
-    # build_bagging_models(estimators, database)
-    # build_ada_boosting_models(estimators, database)
-    # diversity = Diversity(estimators, database)
-    # diversity.diversity_calc()
-    # subsets = diversity.select_subsets()
-    # build_voting_models(subsets, database)
-    # build_stacking_models(subsets, database)
+    build_bagging_models(estimators, database)
+    build_ada_boosting_models(estimators, database)
+    diversity = Diversity(estimators, database)
+    diversity.diversity_calc()
+    subsets = diversity.select_subsets()
+    build_voting_models(subsets, database)
+    build_stacking_models(subsets, database)
     # models_tests()
 
     run_design_experiments(escenario3,
