@@ -9,7 +9,8 @@ from utils.utils import estimators
 from design.experiments import run_design_experiments
 from design.experiments import homogeneo
 import warnings
-
+import pandas as pd
+import pickle
 warnings.filterwarnings('ignore', category=RuntimeWarning)
 warnings.filterwarnings('ignore', category=UserWarning)
 warnings.filterwarnings('ignore', category=FutureWarning)
@@ -38,6 +39,24 @@ def main():
                            ensambles_homogeneos,
                            ensambles_hibridos,
                            path_file, data_pf)
+
+
+
+    # # Cargar el archivo pickle
+    # with open(escenario3, 'rb') as file:
+    #     data = pickle.load(file)
+
+    # # Convertir los datos a una lista de diccionarios si es necesario
+    # # Suponiendo que tus datos son una lista de listas, donde cada sublista representa una fila
+    # # Ajusta este paso según la estructura real de tus datos
+    # processed_data = [dict(enumerate(row)) for row in data]
+
+    # # Crear un DataFrame de pandas
+    # df = pd.DataFrame(processed_data)
+
+    # # Guardar el DataFrame como un archivo CSV
+    # df.to_csv('archivo.csv', index=False)
+
 
 
 if __name__ == '__main__':
