@@ -160,6 +160,19 @@ def sored_data_with_label_1(length, metrics, file,label):
                + ';' + str(label)
                + '\n'
                )
+def write_data_with_label(length, metrics, file, label): 
+    data_row = [
+        str(length),
+        str(metrics[0]), 
+        str(metrics[1]), 
+        str(metrics[2]), 
+        str(metrics[3]), 
+        str(metrics[4]), 
+        str(metrics[5]), 
+        str(metrics[6]), 
+        str(label)
+    ]
+    file.write(';'.join(data_row) + '\n')
 
 
 def data_labeling(data, y, file_pf):

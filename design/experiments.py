@@ -30,10 +30,11 @@ def create_captura(captura1, captura2, data_pf):
         data_subset['true_label'] = y_instances
         data_subset['pred_label'] = y_label
         data_subset.to_csv(path_or_buf=path_files, sep=';')
-        id_subset = f'{prefix}_{i+1}'
+        
 
         with open(path_files, 'a') as f:
-            utils.sored_data_with_label_1(len(X), metricas, f ,bot_subset_label)   
+            utils.write_data_with_label(len(X), metricas,f,bot_subset_label)   
+
 def create_bots_subsets(escenario1, escenario2, data_pf, count):
     columns = ['PC1', 'PC2', 'PC3', 'PC4', 'PC5', 'PC6', 'PC7']
     X, y = utils.merge_scenarios(escenario1, escenario2)
