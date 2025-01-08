@@ -9,7 +9,31 @@ from sklearn.model_selection import train_test_split
 
 path_file = './design/databases/metricas_calculadas.csv'
 
+def create_captura(captura1, captura2, data_pf):
+    columns = ['PC1', 'PC2', 'PC3', 'PC4', 'PC5', 'PC6', 'PC7']
 
+    for i in range(2):
+        # Alternar entre las dos capturas
+        if i == 0:
+            X, y = utils.extract_pickle_file(captura1)
+            prefix = 'K1'
+        else:
+            X, y = utils.extract_pickle_file(captura2)
+            prefix = 'K2'
+        
+        # Usar el conjunto completo de datos
+        x_instances, y_instances, y_label = utils.data_labeling(X, y, data_pf)
+        metricas = Metric(x_instances, y_label).run_metrics()
+        path_files = f'./design/databases/capturas/{prefix}_{i+1}.csv'
+        bot_subset_label = 1
+        data_subset = pd.DataFrame(data=x_instances, columns=columns)
+        data_subset['true_label'] = y_instances
+        data_subset['pred_label'] = y_label
+        data_subset.to_csv(path_or_buf=path_files, sep=';')
+        id_subset = f'{prefix}_{i+1}'
+
+        with open(path_files, 'a') as f:
+            utils.sored_data_with_label_1(len(X), metricas, f ,bot_subset_label)   
 def create_bots_subsets(escenario1, escenario2, data_pf, count):
     columns = ['PC1', 'PC2', 'PC3', 'PC4', 'PC5', 'PC6', 'PC7']
     X, y = utils.merge_scenarios(escenario1, escenario2)
@@ -91,7 +115,7 @@ class homogeneo:
         for ensemble in self.models:
             performance = []
             list_models = []
-            path_models = f'C:/Users/ALEX/Desktop/Multiclasificador/{ensemble}/models_and_evaluation/models/*.pickle'
+            path_models = f'/home/alex/Escritorio/Multiclasificador/{ensemble}/models_and_evaluation/models/*.pickle'
             for i, model in enumerate(glob.glob(path_models)):
                 file_name = model.split('\\')[-1]
                 if ensemble == 'bagging':
@@ -107,6 +131,7 @@ class homogeneo:
                     if hasattr(model_extracted, "estimators_"):
                         model_extracted.estimator_ = model_extracted.estimators_[0]
                     pred_label = model_extracted.predict(self.X_test)
+                    print(pred_label)
                 except ValueError as e:
                     print(f"Error de valor al cargar {model}: {e}")
                     continue
@@ -152,7 +177,7 @@ class hibrido:
         for ensemble in self.models:
             performance = []
             list_models = []
-            path_models = 'C:/Users/ALEX/Desktop/Multiclasificador/' + ensemble + \
+            path_models = '/home/alex/Escritorio/Multiclasificador/' + ensemble + \
                           '/models_and_evaluation/models/*.pickle'
             for i, model in enumerate(glob.glob(path_models)):
                 file_name = model.split('\\')[-1]
@@ -193,6 +218,9 @@ class hibrido:
             results.drop(columns=utils.metricas.keys(), axis=1)
 
 
+ 
+
+
 def run_design_experiments(escenario1, escenario2, homogeneos_list, hibridos_list, data_file_path, data_pf):
     # subsets_count = 100  # Se crearán 100 subconjunto de datos para cada clase
     # if os.path.exists(path_file):
@@ -201,5 +229,6 @@ def run_design_experiments(escenario1, escenario2, homogeneos_list, hibridos_lis
     # create_bots_subsets(escenario1, escenario2, data_pf, subsets_count)
     # create_human_subsets(escenario1, escenario2, data_pf, subsets_count)
 
-    homogeneo(homogeneos_list, data_file_path).evaluar()
-    hibrido(hibridos_list, data_file_path).evaluar()
+    create_captura(escenario1,escenario2,data_pf)
+    # homogeneo(homogeneos_list, data_file_path).evaluar()
+    # hibrido(hibridos_list, data_file_path).evaluar()

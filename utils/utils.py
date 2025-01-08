@@ -138,7 +138,7 @@ def sored_data_with_label(id_subset, length, metrics, label, file):
                )
 
 
-def sored_data_with_label_1(length, metrics, file):
+def sored_data_with_label_1(length, metrics, file,label):
     file.write(str(length)
                + ';' + str(metrics[0])
                + ';' + str(metrics[1])
@@ -157,6 +157,7 @@ def sored_data_with_label_1(length, metrics, file):
                + ';' + str(metrics[14])
                + ';' + str(metrics[15])
                + ';' + str(metrics[16])
+               + ';' + str(label)
                + '\n'
                )
 
