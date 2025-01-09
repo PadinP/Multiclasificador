@@ -116,7 +116,7 @@ class homogeneo:
             list_models = []
             path_models = f'/home/alex/Escritorio/Multiclasificador/{ensemble}/models_and_evaluation/models/*.pickle'
             for i, model in enumerate(glob.glob(path_models)):
-                file_name = model.split('\\')[-1]
+                file_name = model.split('/')[-1]
                 if ensemble == 'bagging':
                     label = file_name.replace('ging.pickle', '')
                     list_models.append(label)
@@ -178,12 +178,21 @@ class hibrido:
             list_models = []
             path_models = f'/home/alex/Escritorio/Multiclasificador/{ensemble}/models_and_evaluation/models/*.pickle'
             for i, model in enumerate(glob.glob(path_models)):
-                file_name = model.split('\\')[-1]
+                file_name = model.split('/')[-1]
                 label = file_name.replace('.pickle', '')
-                if ensemble == 'voting':
-                    list_models.append(int(label.replace('Vot-', '')))
-                elif ensemble == 'stacking':
-                    list_models.append(int(label.replace('Stk-', '')))
+                try:
+                    if ensemble == 'voting':
+                        if label.startswith('Vot-'):
+                            list_models.append(int(label.replace('Vot-', '')))
+                        else:
+                            print(f"Formato inesperado de label: {label}")
+                    elif ensemble == 'stacking':
+                        if label.startswith('Stk-'):
+                            list_models.append(int(label.replace('Stk-', '')))
+                        else:
+                            print(f"Formato inesperado de label: {label}")
+                except ValueError as e:
+                    print(f"Error al convertir label a entero: {e}")
 
                 model_extracted = joblib.load(model)
                 pred_label = model_extracted.predict(self.X_test)
@@ -196,19 +205,19 @@ class hibrido:
             results1 = results.sort_index()
             if ensemble == 'voting':
                 index_order = ['Vot-1', 'Vot-2', 'Vot-3', 'Vot-4', 'Vot-5', 'Vot-6', 'Vot-7', 'Vot-8', 'Vot-9',
-                               'Vot-10', 'Vot-11', 'Vot-12', 'Vot-13', 'Vot-14', 'Vot-15']
+                            'Vot-10', 'Vot-11', 'Vot-12', 'Vot-13', 'Vot-14', 'Vot-15']
                 results1.index = index_order
 
             elif ensemble == 'stacking':
                 index_order = ['Stk-1', 'Stk-2', 'Stk-3', 'Stk-4', 'Stk-5', 'Stk-6', 'Stk-7', 'Stk-8', 'Stk-9',
-                               'Stk-10', 'Stk-11', 'Stk-12', 'Stk-13', 'Stk-14', 'Stk-15']
+                            'Stk-10', 'Stk-11', 'Stk-12', 'Stk-13', 'Stk-14', 'Stk-15']
                 results1.index = index_order
 
             name_graph = './design/reports/' + ensemble + '-classification-report.png'
             name_report = './design/reports/' + ensemble + '-classification-report.txt'
             title = 'Evaluación del multiclasificador ' + ensemble
             xlabel = 'Subconjuntos de clasificadores'
-            ylabel = 'Valor de las mátricas'
+            ylabel = 'Valor de las métricas'
             utils.plot_results(results1, name_graph, title, xlabel, ylabel)
 
             with open(name_report, 'w') as f:
@@ -216,17 +225,18 @@ class hibrido:
             results.drop(columns=utils.metricas.keys(), axis=1)
 
 
+
  
 
 
 def run_design_experiments(escenario1, escenario2, homogeneos_list, hibridos_list, data_file_path, data_pf):
     # subsets_count = 100  # Se crearán 100 subconjunto de datos para cada clase
-    if os.path.exists(path_file):
-        os.remove(path_file)
+    # if os.path.exists(path_file):
+    #     os.remove(path_file)
 
     # create_bots_subsets(escenario1, escenario2, data_pf, subsets_count)
     # create_human_subsets(escenario1, escenario2, data_pf, subsets_count)
 
-    create_captura(escenario1,escenario2,data_pf)
+    # create_captura(escenario1,escenario2,data_pf)
     homogeneo(homogeneos_list, data_file_path).evaluar()
     hibrido(hibridos_list, data_file_path).evaluar()
