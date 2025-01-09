@@ -22,8 +22,8 @@ data_pf = 'files/file_clasf_pf_bueno.pckl'
 ensambles_homogeneos = ['bagging', 'adaboosting']
 ensambles_hibridos = ['voting', 'stacking']
 # path_file = './design/databases/metricas_calculadas.csv'
-path_file = 'design/databases/capturas/metricas_calculadas_2.csv'
-
+path_file = 'design/databases/metricas_calculadas_2.csv'
+path_capturas = 'files/capturas'
 def main():
     build_bagging_models(estimators, database)
     build_ada_boosting_models(estimators, database)
@@ -34,8 +34,7 @@ def main():
     build_stacking_models(subsets, database)
     # # models_tests()
 
-    run_design_experiments(escenario3,
-                           escenario11,
+    run_design_experiments(path_capturas,
                            ensambles_homogeneos,
                            ensambles_hibridos,
                            path_file, data_pf)

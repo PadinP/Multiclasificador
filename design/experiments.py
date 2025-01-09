@@ -8,94 +8,130 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 # path_file = './design/databases/metricas_calculadas.csv'
-path_file = 'design/databases/capturas/metricas_calculadas_2.csv'
+path_file = 'design/databases/metricas_calculadas_2.csv'
 
-def create_captura(captura1, captura2, data_pf):
-    path_file = 'design/databases/capturas/metricas_calculadas_2.csv'
-    for i in range(2):
-        # Alternar entre las dos capturas
-        if i == 0:
-            X, y = utils.extract_pickle_file(captura1)
-            prefix = '1K.1'
+
+def extraer_metricas(directory_path, data_pf):
+
+    # Dictionary to map file names to prefixes
+    file_prefix_mapping = {
+        '0.minmax_smote.pickle': '1K.1',
+        '1.minmax_smote.pickle': '1K.2',
+        '2.minmax_smote.pickle': '5K.1',
+        '3.minmax_smote.pickle': '5K.2',
+        '4.minmax_smote.pickle': '1M.1',
+        '5.minmax_smote.pickle': '1M.2'
+    }
+    
+    for file_name in os.listdir(directory_path):
+        # Construct full file path
+        file_path = os.path.join(directory_path, file_name)
+        
+        # Check if the file_name is in our mapping
+        if file_name in file_prefix_mapping:
+            prefix = file_prefix_mapping[file_name]
+            X, y = utils.extract_pickle_file(file_path)
+            
+            # Usar el conjunto completo de datos
+            x_instances, y_instances, y_label = utils.data_labeling(X, y, data_pf)
+            bot_subset_label = 1
+            
+            # calcular métricas y salvarlas en un archivo
+            metricas = Metric(x_instances, y_label).run_metrics()
+            with open(path_file, '+a') as f:
+                utils.sored_data_with_label(prefix, len(X), metricas, bot_subset_label, f)   
         else:
-            X, y = utils.extract_pickle_file(captura2)
-            prefix = '1K.2'
-        # Usar el conjunto completo de datos
-        x_instances, y_instances, y_label = utils.data_labeling(X, y, data_pf)
-        bot_subset_label = 1
-        # print("x_instances (características de los datos):", x_instances)
-        # print("y_instances (etiquetas originales):", y_instances)
-        # print("y_label (etiquetas predichas):", y_label)
-
-        metricas = Metric(x_instances, y_label).run_metrics()
-        with open(path_file, '+a') as f:
-            utils.sored_data_with_label(prefix,len(X),metricas,bot_subset_label,f)   
+            print(f"Archivo {file_name} no está en el mapeo, se ignora.")
 
 
 
-def create_bots_subsets(escenario1, escenario2, data_pf, count):
-    columns = ['PC1', 'PC2', 'PC3', 'PC4', 'PC5', 'PC6', 'PC7']
-    X, y = utils.merge_scenarios(escenario1, escenario2)
-    size_list1 = np.random.randint(low=10, high=10000, size=count).tolist()
-    for i, size in enumerate(size_list1):
-        x_selected, _, y_selected, _ = train_test_split(X,
-                                                        y,
-                                                        train_size=size,
-                                                        shuffle=True,
-                                                        random_state=2022
-                                                        )
-        x_instances, y_instances, y_label = utils.data_labeling(x_selected, y_selected, data_pf)
-        metricas = Metric(x_instances, y_label).run_metrics()
-        # Calcula las metricas de complejidad del subconjunto de datos
-        path_files = './design/databases/conjuntos con bots/B' + str(i + 1) + '.csv'
-        bot_subset_label = 1
-        data_subset = pd.DataFrame(data=x_instances, columns=columns)
-        data_subset['true_label'] = y_instances
-        data_subset['pred_label'] = y_label
-        data_subset.to_csv(path_or_buf=path_files, sep=';')
-        id_subset = 'B' + str(i + 1)
 
-        with open(path_file, 'a') as f:
-            utils.sored_data_with_label(id_subset, size, metricas, bot_subset_label, f)
+# def create_captura(captura1, captura2, data_pf):
+#     path_file = 'design/databases/capturas/metricas_calculadas_2.csv'
+#     for i in range(2):
+#         # Alternar entre las dos capturas
+#         if i == 0:
+#             X, y = utils.extract_pickle_file(captura1)
+#             prefix = '1K.1'
+#         else:
+#             X, y = utils.extract_pickle_file(captura2)
+#             prefix = '1K.2'
+#         # Usar el conjunto completo de datos
+#         x_instances, y_instances, y_label = utils.data_labeling(X, y, data_pf)
+#         bot_subset_label = 1
+#         # print("x_instances (características de los datos):", x_instances)
+#         # print("y_instances (etiquetas originales):", y_instances)
+#         # print("y_label (etiquetas predichas):", y_label)
+
+#         metricas = Metric(x_instances, y_label).run_metrics()
+#         with open(path_file, '+a') as f:
+#             utils.sored_data_with_label(prefix,len(X),metricas,bot_subset_label,f)   
 
 
-def create_human_subsets(escenario1, escenario2, data_pf, count):
-    global x_negatives
-    columns = ['PC1', 'PC2', 'PC3', 'PC4', 'PC5', 'PC6', 'PC7']
-    X, y = utils.merge_scenarios(escenario1, escenario2)
-    size_list2 = np.random.randint(low=10, high=10000, size=count).tolist()
-    for b, size in enumerate(size_list2):
-        x_negatives = []
-        true_label = []
-        pred_label = []
-        x_selected, _, y_selected, _ = train_test_split(X,
-                                                        y,
-                                                        train_size=size,
-                                                        shuffle=True,
-                                                        random_state=2022
-                                                        )
-        x_instances, y_instances, y_label = utils.data_labeling(x_selected, y_selected, data_pf)
-        for i, j, k in zip(x_instances, y_instances, y_label):
-            if k == 0:
-                x_negatives.append(i)
-                true_label.append(j)
-                pred_label.append(k)
-        metricas = Metric(np.array(x_negatives), pred_label).run_metrics()
-        data_subset = pd.DataFrame(data=x_negatives, columns=columns)
-        data_subset['true_label'] = true_label
-        data_subset['pred_label'] = pred_label
-        # Calcula las metricas de complejidad del subconjunto de datos
-        path_files = './design/databases/conjuntos sin bots/H' + str(b + 1) + '.csv'
-        data_subset.to_csv(path_or_buf=path_files, sep=';')
 
-        human_subset_label = 0
-        id_subset = 'H' + str(b + 1)
-        size = np.array(x_negatives).shape[0]
-        del x_negatives
-        del true_label
-        del pred_label
-        with open(path_file, 'a') as f:
-            utils.sored_data_with_label(id_subset, size, metricas, human_subset_label, f)
+# def create_bots_subsets(escenario1, escenario2, data_pf, count):
+#     columns = ['PC1', 'PC2', 'PC3', 'PC4', 'PC5', 'PC6', 'PC7']
+#     X, y = utils.merge_scenarios(escenario1, escenario2)
+#     size_list1 = np.random.randint(low=10, high=10000, size=count).tolist()
+#     for i, size in enumerate(size_list1):
+#         x_selected, _, y_selected, _ = train_test_split(X,
+#                                                         y,
+#                                                         train_size=size,
+#                                                         shuffle=True,
+#                                                         random_state=2022
+#                                                         )
+#         x_instances, y_instances, y_label = utils.data_labeling(x_selected, y_selected, data_pf)
+#         metricas = Metric(x_instances, y_label).run_metrics()
+#         # Calcula las metricas de complejidad del subconjunto de datos
+#         path_files = './design/databases/conjuntos con bots/B' + str(i + 1) + '.csv'
+#         bot_subset_label = 1
+#         data_subset = pd.DataFrame(data=x_instances, columns=columns)
+#         data_subset['true_label'] = y_instances
+#         data_subset['pred_label'] = y_label
+#         data_subset.to_csv(path_or_buf=path_files, sep=';')
+#         id_subset = 'B' + str(i + 1)
+
+#         with open(path_file, 'a') as f:
+#             utils.sored_data_with_label(id_subset, size, metricas, bot_subset_label, f)
+
+
+# def create_human_subsets(escenario1, escenario2, data_pf, count):
+#     global x_negatives
+#     columns = ['PC1', 'PC2', 'PC3', 'PC4', 'PC5', 'PC6', 'PC7']
+#     X, y = utils.merge_scenarios(escenario1, escenario2)
+#     size_list2 = np.random.randint(low=10, high=10000, size=count).tolist()
+#     for b, size in enumerate(size_list2):
+#         x_negatives = []
+#         true_label = []
+#         pred_label = []
+#         x_selected, _, y_selected, _ = train_test_split(X,
+#                                                         y,
+#                                                         train_size=size,
+#                                                         shuffle=True,
+#                                                         random_state=2022
+#                                                         )
+#         x_instances, y_instances, y_label = utils.data_labeling(x_selected, y_selected, data_pf)
+#         for i, j, k in zip(x_instances, y_instances, y_label):
+#             if k == 0:
+#                 x_negatives.append(i)
+#                 true_label.append(j)
+#                 pred_label.append(k)
+#         metricas = Metric(np.array(x_negatives), pred_label).run_metrics()
+#         data_subset = pd.DataFrame(data=x_negatives, columns=columns)
+#         data_subset['true_label'] = true_label
+#         data_subset['pred_label'] = pred_label
+#         # Calcula las metricas de complejidad del subconjunto de datos
+#         path_files = './design/databases/conjuntos sin bots/H' + str(b + 1) + '.csv'
+#         data_subset.to_csv(path_or_buf=path_files, sep=';')
+
+#         human_subset_label = 0
+#         id_subset = 'H' + str(b + 1)
+#         size = np.array(x_negatives).shape[0]
+#         del x_negatives
+#         del true_label
+#         del pred_label
+#         with open(path_file, 'a') as f:
+#             utils.sored_data_with_label(id_subset, size, metricas, human_subset_label, f)
 
 
 class homogeneo:
@@ -170,7 +206,7 @@ class homogeneo:
             for i in range(len(formatted_predictions.columns)-1)] 
             formatted_predictions.columns = header 
             # Guardar las predicciones formateadas en un archivo CSV 
-            formatted_predictions.to_csv('design/databases/capturas/all_predictions_homogeneo.csv', sep=';', index=False)
+            formatted_predictions.to_csv('design/databases/prediciones/all_predictions_homogeneo.csv', sep=';', index=False)
             
 class hibrido:
     def __init__(self, models, data):
@@ -251,16 +287,25 @@ class hibrido:
             for i in range(len(formatted_predictions.columns)-1)] 
             formatted_predictions.columns = header 
             # Guardar las predicciones formateadas en un archivo CSV 
-            formatted_predictions.to_csv('design/databases/capturas/all_predictions_hibrido.csv', sep=';', index=False)
+            formatted_predictions.to_csv('design/databases/prediciones/all_predictions_hibrido.csv', sep=';', index=False)
 
-def run_design_experiments(escenario1, escenario2, homogeneos_list, hibridos_list, data_file_path, data_pf):
-    # subsets_count = 100  # Se crearán 100 subconjunto de datos para cada clase
+# def run_design_experiments(escenario1, escenario2, homogeneos_list, hibridos_list, data_file_path, data_pf):
+#     # subsets_count = 100  # Se crearán 100 subconjunto de datos para cada clase
+#     if os.path.exists(path_file):
+#         os.remove(path_file)
+
+#     # create_bots_subsets(escenario1, escenario2, data_pf, subsets_count)
+#     # create_human_subsets(escenario1, escenario2, data_pf, subsets_count)
+
+#     create_captura(escenario1,escenario2,data_pf)
+#     homogeneo(homogeneos_list, data_file_path).evaluar()
+#     hibrido(hibridos_list, data_file_path).evaluar()
+
+
+def run_design_experiments(path_capturas, homogeneos_list, hibridos_list, data_file_path, data_pf):
     if os.path.exists(path_file):
         os.remove(path_file)
 
-    # create_bots_subsets(escenario1, escenario2, data_pf, subsets_count)
-    # create_human_subsets(escenario1, escenario2, data_pf, subsets_count)
-
-    create_captura(escenario1,escenario2,data_pf)
+    extraer_metricas(path_capturas,data_pf)
     homogeneo(homogeneos_list, data_file_path).evaluar()
     hibrido(hibridos_list, data_file_path).evaluar()
