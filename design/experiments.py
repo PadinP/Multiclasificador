@@ -111,6 +111,8 @@ class homogeneo:
         self.true_label = self.df['label']
 
     def evaluar(self):
+        all_predictions = pd.DataFrame()
+        prefix = '1K'
         for ensemble in self.models:
             performance = []
             list_models = []
@@ -137,6 +139,9 @@ class homogeneo:
                 except AttributeError as e:
                     print(f"Error de atributo con el modelo {model}: {e}")
                     continue
+                
+                # Añadir predicciones al DataFrame
+                all_predictions[f'{ensemble}_{label}'] = pred_label
 
                 performance.append([])
                 for metrica in utils.metricas.keys():
@@ -157,8 +162,16 @@ class homogeneo:
 
             results.drop(columns=utils.metricas.keys(), axis=1)
 
-
-
+            # Crear un nuevo DataFrame para almacenar el formato deseado 
+            formatted_predictions = all_predictions.T 
+            formatted_predictions.insert(0, 'Tipo de modelo', formatted_predictions.index)
+             # Añadir encabezado adicional 
+            header = ['Tipo de modelo'] + [f'{prefix}.{i+1}' 
+            for i in range(len(formatted_predictions.columns)-1)] 
+            formatted_predictions.columns = header 
+            # Guardar las predicciones formateadas en un archivo CSV 
+            formatted_predictions.to_csv('design/databases/capturas/all_predictions_homogeneo.csv', sep=';', index=False)
+            
 class hibrido:
     def __init__(self, models, data):
         self.performance = []
@@ -173,6 +186,8 @@ class hibrido:
         self.true_label = self.df['label']
 
     def evaluar(self):
+        all_predictions = pd.DataFrame()
+        prefix = '1K'
         for ensemble in self.models:
             performance = []
             list_models = []
@@ -196,7 +211,11 @@ class hibrido:
 
                 model_extracted = joblib.load(model)
                 pred_label = model_extracted.predict(self.X_test)
+                print(pred_label)
                 performance.append([])
+
+                # Añadir predicciones al DataFrame
+                all_predictions[f'{ensemble}_{label}'] = pred_label
 
                 for metrica in utils.metricas.keys():
                     performance[i].append(round(utils.metricas[metrica](self.true_label, pred_label), 2))
@@ -224,19 +243,24 @@ class hibrido:
                 f.write(str(results))
             results.drop(columns=utils.metricas.keys(), axis=1)
 
-
-
- 
-
+            # Crear un nuevo DataFrame para almacenar el formato deseado 
+            formatted_predictions = all_predictions.T 
+            formatted_predictions.insert(0, 'Tipo de modelo', formatted_predictions.index)
+             # Añadir encabezado adicional 
+            header = ['Tipo de modelo'] + [f'{prefix}.{i+1}' 
+            for i in range(len(formatted_predictions.columns)-1)] 
+            formatted_predictions.columns = header 
+            # Guardar las predicciones formateadas en un archivo CSV 
+            formatted_predictions.to_csv('design/databases/capturas/all_predictions_hibrido.csv', sep=';', index=False)
 
 def run_design_experiments(escenario1, escenario2, homogeneos_list, hibridos_list, data_file_path, data_pf):
     # subsets_count = 100  # Se crearán 100 subconjunto de datos para cada clase
-    # if os.path.exists(path_file):
-    #     os.remove(path_file)
+    if os.path.exists(path_file):
+        os.remove(path_file)
 
     # create_bots_subsets(escenario1, escenario2, data_pf, subsets_count)
     # create_human_subsets(escenario1, escenario2, data_pf, subsets_count)
 
-    # create_captura(escenario1,escenario2,data_pf)
+    create_captura(escenario1,escenario2,data_pf)
     homogeneo(homogeneos_list, data_file_path).evaluar()
     hibrido(hibridos_list, data_file_path).evaluar()
