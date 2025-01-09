@@ -19,20 +19,20 @@ database = 'files/characterization_database.txt'
 escenario11 = 'files/1.minmax_smote.pickle' 
 escenario3 = 'files/0.minmax_smote.pickle' 
 data_pf = 'files/file_clasf_pf_bueno.pckl' 
-path_file = './design/databases/metricas_calculadas.csv'
 ensambles_homogeneos = ['bagging', 'adaboosting']
 ensambles_hibridos = ['voting', 'stacking']
-
+# path_file = './design/databases/metricas_calculadas.csv'
+path_file = 'design/databases/capturas/metricas_calculadas_2.csv'
 
 def main():
-    # build_bagging_models(estimators, database)
-    # build_ada_boosting_models(estimators, database)
-    # diversity = Diversity(estimators, database)
-    # diversity.diversity_calc()
-    # subsets = diversity.select_subsets()
-    # build_voting_models(subsets, database)
-    # build_stacking_models(subsets, database)
-    # models_tests()
+    build_bagging_models(estimators, database)
+    build_ada_boosting_models(estimators, database)
+    diversity = Diversity(estimators, database)
+    diversity.diversity_calc()
+    subsets = diversity.select_subsets()
+    build_voting_models(subsets, database)
+    build_stacking_models(subsets, database)
+    # # models_tests()
 
     run_design_experiments(escenario3,
                            escenario11,

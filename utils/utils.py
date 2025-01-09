@@ -136,6 +136,28 @@ def sored_data_with_label(id_subset, length, metrics, label, file):
                + ';' + str(label)
                + '\n'
                )
+    
+# def write_data(id_subset, length, metrics,file):
+#     file.write(str(id_subset) + ';' + str(length)
+#                + ';' + str(metrics[0])
+#                + ';' + str(metrics[1])
+#                + ';' + str(metrics[2])
+#                + ';' + str(metrics[3])
+#                + ';' + str(metrics[4])
+#                + ';' + str(metrics[5])
+#                + ';' + str(metrics[6])
+#                + ';' + str(metrics[7])
+#                + ';' + str(metrics[8])
+#                + ';' + str(metrics[9])
+#                + ';' + str(metrics[10])
+#                + ';' + str(metrics[11])
+#                + ';' + str(metrics[12])
+#                + ';' + str(metrics[13])
+#                + ';' + str(metrics[14])
+#                + ';' + str(metrics[15])
+#                + ';' + str(metrics[16])
+#                + '\n'
+#                )
 
 
 def sored_data_with_label_1(length, metrics, file,label):
@@ -160,19 +182,7 @@ def sored_data_with_label_1(length, metrics, file,label):
                + ';' + str(label)
                + '\n'
                )
-def write_data_with_label(length, metrics, file, label): 
-    data_row = [
-        str(length),
-        str(metrics[0]), 
-        str(metrics[1]), 
-        str(metrics[2]), 
-        str(metrics[3]), 
-        str(metrics[4]), 
-        str(metrics[5]), 
-        str(metrics[6]), 
-        str(label)
-    ]
-    file.write(';'.join(data_row) + '\n')
+
 
 
 def data_labeling(data, y, file_pf):
