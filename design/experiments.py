@@ -15,12 +15,11 @@ def extraer_metricas(directory_path, data_pf):
 
     # Dictionary to map file names to prefixes
     file_prefix_mapping = {
-        '0.minmax_smote.pickle': '1K.1',
-        '1.minmax_smote.pickle': '1K.2',
-        '2.minmax_smote.pickle': '5K.1',
-        '3.minmax_smote.pickle': '5K.2',
-        '4.minmax_smote.pickle': '1M.1',
-        '5.minmax_smote.pickle': '1M.2'
+        '1.minmax_smote.pickle': '50K',
+        '2.minmax_smote.pickle': '100K',
+        '3.minmax_smote.pickle': '200K'
+        
+        
     }
     
     for file_name in os.listdir(directory_path):
@@ -148,7 +147,7 @@ class homogeneo:
 
     def evaluar(self):
         all_predictions = pd.DataFrame()
-        prefix = '1K'
+        prefix = 'C'
         for ensemble in self.models:
             performance = []
             list_models = []
@@ -223,7 +222,7 @@ class hibrido:
 
     def evaluar(self):
         all_predictions = pd.DataFrame()
-        prefix = '1K'
+        prefix = 'C'
         for ensemble in self.models:
             performance = []
             list_models = []

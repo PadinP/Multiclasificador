@@ -23,7 +23,7 @@ ensambles_homogeneos = ['bagging', 'adaboosting']
 ensambles_hibridos = ['voting', 'stacking']
 # path_file = './design/databases/metricas_calculadas.csv'
 path_file = 'design/databases/metricas_calculadas_2.csv'
-path_capturas = 'files/capturas'
+path_capturas = 'files/capturas_procesadas'
 def main():
     build_bagging_models(estimators, database)
     build_ada_boosting_models(estimators, database)
