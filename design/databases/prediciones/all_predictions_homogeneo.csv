@@ -1,0 +1,15 @@
+Tipo de modelo;C.1;C.2;C.3
+bagging_CART-bag;1.0;1.0;1.0
+bagging_NAIVE-bag;1.0;1.0;1.0
+bagging_MLP-bag;1.0;1.0;1.0
+bagging_SGD-bag;1.0;1.0;1.0
+bagging_SVC-bag;1.0;1.0;1.0
+bagging_KNN-bag;1.0;1.0;1.0
+bagging_EXTRA-bag;1.0;1.0;1.0
+bagging_LR-bag;1.0;1.0;1.0
+adaboosting_NAIVE-ada;1.0;1.0;0.0
+adaboosting_EXTRA-ada;1.0;0.0;1.0
+adaboosting_LR-ada;1.0;1.0;1.0
+adaboosting_SVC-ada;1.0;1.0;1.0
+adaboosting_CART-ada;1.0;1.0;1.0
+adaboosting_SGD-ada;1.0;1.0;1.0
