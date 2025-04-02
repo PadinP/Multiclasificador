@@ -41,7 +41,7 @@ def build_bagging_models(estimators, data_path):
 
     for i, estimator in enumerate(estimators.keys()):
         name_model_file = folders + '/' + estimator + '-bagging.pickle'
-        bagging = BaggingClassifier(base_estimator=estimators[estimator], n_jobs=-1)
+        bagging = BaggingClassifier(estimator=estimators[estimator], n_jobs=-1)
         model_id.append(estimator)
 
         for metrica in metricas:

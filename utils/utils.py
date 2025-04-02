@@ -23,11 +23,12 @@ estimators = {
     'CART': DecisionTreeClassifier(),
     'NAIVE': GaussianNB(),
     'KNN': KNeighborsClassifier(),
-    'SGD': SGDClassifier(),
+    'SGD': SGDClassifier(loss='log_loss', max_iter=1000),  # Actualiza la función de pérdida a 'log'
     'SVC': SVC(max_iter=15000, probability=True),
     'MLP': MLPClassifier(random_state=0, max_iter=4000),
     'EXTRA': ExtraTreeClassifier()
 }
+
 
 metricas = {
     'Accuracy': accuracy_score,
@@ -102,12 +103,15 @@ def selected_conbination(i, results, file):
 
 
 def loadData(database_path):
-    names = ["f1", "f2", "f3", "f4", "l1", "l2", "l3", "n1", "n2", "n3", "n4", "t1", "t2", "t3", "t4", "c1", "c2",
-             'label']
-    df = pd.read_csv(database_path, sep=';', names=names, skiprows=1)
-    df['c2'].replace([np.inf, -np.inf], 0, inplace=True)
-
-    return np.array(df)
+    names = ["f1", "f2", "f3", "f4", "l1", "l2", "l3", "n1", "n2", "n3", "n4", "t1", "t2", "t3", "t4", "c1", "c2", 'label']
+    try:
+        df = pd.read_csv(database_path, sep=';', names=names, skiprows=1, engine='python', on_bad_lines='skip')
+        df['c2'].replace([np.inf, -np.inf], 0, inplace=True)
+        df = df.dropna()  # Elimina filas con datos faltantes
+        return np.array(df)
+    except pd.errors.ParserError as e:
+        print(f"Error al analizar el archivo CSV: {e}")
+        return None
 
 
 def sored_data_with_label(id_subset, length, metrics, label, file):
@@ -132,9 +136,31 @@ def sored_data_with_label(id_subset, length, metrics, label, file):
                + ';' + str(label)
                + '\n'
                )
+    
+# def write_data(id_subset, length, metrics,file):
+#     file.write(str(id_subset) + ';' + str(length)
+#                + ';' + str(metrics[0])
+#                + ';' + str(metrics[1])
+#                + ';' + str(metrics[2])
+#                + ';' + str(metrics[3])
+#                + ';' + str(metrics[4])
+#                + ';' + str(metrics[5])
+#                + ';' + str(metrics[6])
+#                + ';' + str(metrics[7])
+#                + ';' + str(metrics[8])
+#                + ';' + str(metrics[9])
+#                + ';' + str(metrics[10])
+#                + ';' + str(metrics[11])
+#                + ';' + str(metrics[12])
+#                + ';' + str(metrics[13])
+#                + ';' + str(metrics[14])
+#                + ';' + str(metrics[15])
+#                + ';' + str(metrics[16])
+#                + '\n'
+#                )
 
 
-def sored_data_with_label_1(length, metrics, file):
+def sored_data_with_label_1(length, metrics, file,label):
     file.write(str(length)
                + ';' + str(metrics[0])
                + ';' + str(metrics[1])
@@ -153,8 +179,10 @@ def sored_data_with_label_1(length, metrics, file):
                + ';' + str(metrics[14])
                + ';' + str(metrics[15])
                + ';' + str(metrics[16])
+               + ';' + str(label)
                + '\n'
                )
+
 
 
 def data_labeling(data, y, file_pf):
@@ -189,29 +217,43 @@ class DiversityMeasures:
         n_predictors = self.predictions.shape[1]
         df_total, df_ij, p_total, p_ij, q_total, q_ij, d_total, d_ij = 0, 0, 0, 0, 0, 0, 0, 0
 
-        columns = list()
-        for i in range(0, len(self.predictions.columns), 1):
-            columns.append(i)
+        # Ajustar los nombres de las columnas
+        columns = list(range(len(self.predictions.columns)))
         self.predictions.columns = columns
 
+        # Iterar sobre los pares de predictores
         for i in range(0, n_predictors - 1):
             for j in range(i + 1, n_predictors):
                 i_pred = self.predictions[i]
                 j_pred = self.predictions[j]
+                
+                # Calcular las métricas de diversidad
                 df_ij = double_fault(self.y, i_pred, j_pred)
                 p_ij = correlation_coefficient(self.y, i_pred, j_pred)
-                q_ij = Q_statistic(self.y, i_pred, j_pred)
+                
+                # Comprobar el denominador antes de llamar a Q_statistic
+                try:
+                    q_ij = Q_statistic(self.y, i_pred, j_pred)
+                except ZeroDivisionError:
+                    q_ij = 0  # Valor predeterminado si ocurre división por cero
+                
                 d_ij = disagreement_measure(self.y, i_pred, j_pred)
-            df_total += df_ij
-            p_total += p_ij
-            q_total += q_ij
-            d_total += d_ij
-        df = round(2 * df_total / (n_predictors * (n_predictors - 1)), 2)
-        p = round(2 * p_total / (n_predictors * (n_predictors - 1)), 2)
-        q = round(2 * q_total / (n_predictors * (n_predictors - 1)), 2)
-        d = round(2 * d_total / (n_predictors * (n_predictors - 1)), 2)
+                
+                # Acumular los resultados
+                df_total += df_ij
+                p_total += p_ij
+                q_total += q_ij
+                d_total += d_ij
+
+        # Calcular los promedios finales
+        divisor = n_predictors * (n_predictors - 1)
+        df = round(2 * df_total / divisor, 2)
+        p = round(2 * p_total / divisor, 2)
+        q = round(2 * q_total / divisor, 2)
+        d = round(2 * d_total / divisor, 2)
 
         return df, p, q, d
+
 
 
 def merge_scenarios(escenario1, escenario2):

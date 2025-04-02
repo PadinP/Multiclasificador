@@ -1,0 +1,9 @@
+           Accuracy  Precision  Recall   F1  AUC
+CART-bag        1.0        1.0     1.0  1.0  NaN
+NAIVE-bag       1.0        1.0     1.0  1.0  NaN
+MLP-bag         1.0        1.0     1.0  1.0  NaN
+SGD-bag         1.0        1.0     1.0  1.0  NaN
+SVC-bag         1.0        1.0     1.0  1.0  NaN
+KNN-bag         1.0        1.0     1.0  1.0  NaN
+EXTRA-bag       1.0        1.0     1.0  1.0  NaN
+LR-bag          1.0        1.0     1.0  1.0  NaN
