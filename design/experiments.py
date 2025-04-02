@@ -151,7 +151,7 @@ class homogeneo:
         for ensemble in self.models:
             performance = []
             list_models = []
-            path_models = f'/home/alex/Escritorio/Multiclasificador/{ensemble}/models_and_evaluation/models/*.pickle'
+            path_models = f'/home/app/Escritorio/Multiclasificador/{ensemble}/models_and_evaluation/models/*.pickle'
             for i, model in enumerate(glob.glob(path_models)):
                 file_name = model.split('/')[-1]
                 if ensemble == 'bagging':
@@ -190,7 +190,7 @@ class homogeneo:
             title = f'Evaluación del multiclasificador {ensemble}'
             xlabel = 'Subconjuntos de clasificadores'
             ylabel = 'Valor de las métricas'
-            utils.plot_results(results, name_graph, title, xlabel, ylabel)
+            # utils.plot_results(results, name_graph, title, xlabel, ylabel)
 
             with open(name_report, 'w') as f:
                 f.write(str(results))
@@ -226,7 +226,7 @@ class hibrido:
         for ensemble in self.models:
             performance = []
             list_models = []
-            path_models = f'/home/alex/Escritorio/Multiclasificador/{ensemble}/models_and_evaluation/models/*.pickle'
+            path_models = f'/home/app/Escritorio/Multiclasificador/{ensemble}/models_and_evaluation/models/*.pickle'
             for i, model in enumerate(glob.glob(path_models)):
                 file_name = model.split('/')[-1]
                 label = file_name.replace('.pickle', '')

@@ -217,29 +217,43 @@ class DiversityMeasures:
         n_predictors = self.predictions.shape[1]
         df_total, df_ij, p_total, p_ij, q_total, q_ij, d_total, d_ij = 0, 0, 0, 0, 0, 0, 0, 0
 
-        columns = list()
-        for i in range(0, len(self.predictions.columns), 1):
-            columns.append(i)
+        # Ajustar los nombres de las columnas
+        columns = list(range(len(self.predictions.columns)))
         self.predictions.columns = columns
 
+        # Iterar sobre los pares de predictores
         for i in range(0, n_predictors - 1):
             for j in range(i + 1, n_predictors):
                 i_pred = self.predictions[i]
                 j_pred = self.predictions[j]
+                
+                # Calcular las métricas de diversidad
                 df_ij = double_fault(self.y, i_pred, j_pred)
                 p_ij = correlation_coefficient(self.y, i_pred, j_pred)
-                q_ij = Q_statistic(self.y, i_pred, j_pred)
+                
+                # Comprobar el denominador antes de llamar a Q_statistic
+                try:
+                    q_ij = Q_statistic(self.y, i_pred, j_pred)
+                except ZeroDivisionError:
+                    q_ij = 0  # Valor predeterminado si ocurre división por cero
+                
                 d_ij = disagreement_measure(self.y, i_pred, j_pred)
-            df_total += df_ij
-            p_total += p_ij
-            q_total += q_ij
-            d_total += d_ij
-        df = round(2 * df_total / (n_predictors * (n_predictors - 1)), 2)
-        p = round(2 * p_total / (n_predictors * (n_predictors - 1)), 2)
-        q = round(2 * q_total / (n_predictors * (n_predictors - 1)), 2)
-        d = round(2 * d_total / (n_predictors * (n_predictors - 1)), 2)
+                
+                # Acumular los resultados
+                df_total += df_ij
+                p_total += p_ij
+                q_total += q_ij
+                d_total += d_ij
+
+        # Calcular los promedios finales
+        divisor = n_predictors * (n_predictors - 1)
+        df = round(2 * df_total / divisor, 2)
+        p = round(2 * p_total / divisor, 2)
+        q = round(2 * q_total / divisor, 2)
+        d = round(2 * d_total / divisor, 2)
 
         return df, p, q, d
+
 
 
 def merge_scenarios(escenario1, escenario2):
